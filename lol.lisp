@@ -86,7 +86,7 @@
 )
 
 
-(defmacro defmacro/g! (name args &rest body)
+(defmacro defmacro/g! (name args &body body)
   (let ((syms (remove-duplicates
                 (remove-if-not #'g!-symbol-p
                                (flatten body)))))
@@ -115,7 +115,7 @@
 )
 
 
-(defmacro defmacro! (name args &rest body)
+(defmacro defmacro! (name args &body body)
   (let* ((os (remove-if-not #'o!-symbol-p args))
          (gs (mapcar #'o!-symbol-to-g!-symbol os)))
     `(defmacro/g! ,name ,args
@@ -311,7 +311,7 @@
 )
 
 
-(defmacro alet% (letargs &rest body)
+(defmacro alet% (letargs &body body)
   `(let ((this) ,@letargs)
      (setq this ,@(last body))
      ,@(butlast body)
@@ -319,7 +319,7 @@
 
 
 
-(defmacro alet (letargs &rest body)
+(defmacro alet (letargs &body body)
   `(let ((this) ,@letargs)
      (setq this ,@(last body))
      ,@(butlast body)
@@ -340,7 +340,7 @@
       (let-binding-transform (cdr bs)))))
 
 
-(defmacro pandoriclet (letargs &rest body)
+(defmacro pandoriclet (letargs &body body)
   (let ((letargs (cons
                    '(this)
                    (let-binding-transform
@@ -389,7 +389,7 @@
 
 
 
-(defmacro with-pandoric (syms box &rest body)
+(defmacro with-pandoric (syms box &body body)
   (let ((g!box (gensym "box")))
     `(let ((,g!box ,box))
        (declare (ignorable ,g!box))
@@ -412,7 +412,7 @@
 
 
 
-(defmacro plambda (largs pargs &rest body)
+(defmacro plambda (largs pargs &body body)
   (let ((pargs (mapcar #'list pargs)))
     `(let (this self)
        (declare (ignorable this self))
@@ -452,12 +452,12 @@
 )
 
 
-(defmacro fast-progn (&rest body)
+(defmacro fast-progn (&body body)
   `(locally #f ,@body))
 
 
 
-(defmacro safe-progn (&rest body)
+(defmacro safe-progn (&body body)
   `(locally #0f ,@body))
 
 
@@ -551,7 +551,7 @@
 
 
 
-(defmacro! sortf (comparator &rest places)
+(defmacro! sortf (comparator &body places)
   (if places
     `(tagbody
        ,@(mapcar
