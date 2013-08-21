@@ -1,3 +1,5 @@
+(in-package :let-over-lambda)
+
 ;; Antiweb (C) Doug Hoyte
 
 ;; This is a "production" version of LOL with bug-fixes
@@ -26,8 +28,7 @@
 ;;   * renamed pandoric-eval-tunnel to *pandoric-eval-tunnel*
 ;;     to conform with Common Lisp name convention
 
-
-
+(eval-when (:compile-toplevel)
 (defun mkstr (&rest args)
   (with-output-to-string (s)
     (dolist (a args) (princ a s))))
@@ -59,7 +60,7 @@
                         (car x)
                         (rec (cdr x) acc))))))
     (rec x nil)))
-
+)
 
 
 (defun fact (x)
@@ -74,7 +75,7 @@
 
 
 
-
+(eval-when (:compile-toplevel)
 (defun g!-symbol-p (s)
   (and (symbolp s)
        (> (length (symbol-name s)) 2)
@@ -82,7 +83,7 @@
                 "G!"
                 :start1 0
                 :end1 2)))
-
+)
 
 
 (defmacro defmacro/g! (name args &rest body)
@@ -99,7 +100,7 @@
          ,@body))))
 
 
-
+(eval-when (:compile-toplevel)
 (defun o!-symbol-p (s)
   (and (symbolp s)
        (> (length (symbol-name s)) 2)
@@ -111,7 +112,7 @@
 (defun o!-symbol-to-g!-symbol (s)
   (symb "G!"
         (subseq (symbol-name s) 2)))
-
+)
 
 
 (defmacro defmacro! (name args &rest body)
@@ -296,6 +297,7 @@
 
 
 
+(eval-when (:compile-toplevel)
 (defun |#`-reader| (stream sub-char numarg)
   (declare (ignore sub-char))
   (unless numarg (setq numarg 1))
@@ -306,7 +308,7 @@
 
 (set-dispatch-macro-character
   #\# #\` #'|#`-reader|)
-
+)
 
 
 (defmacro alet% (letargs &rest body)
@@ -438,6 +440,7 @@
 
 ;; Chapter 7
 
+(eval-when (:compile-toplevel)
 (set-dispatch-macro-character #\# #\f
    (lambda (stream sub-char numarg)
      (declare (ignore stream sub-char))
@@ -446,7 +449,7 @@
        (error "Bad value for #f: ~a" numarg))
      `(declare (optimize (speed ,numarg)
                          (safety ,(- 3 numarg))))))
-
+)
 
 
 (defmacro fast-progn (&rest body)
